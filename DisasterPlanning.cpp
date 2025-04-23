@@ -1,4 +1,5 @@
 #include "DisasterPlanning.h"
+
 #include "error.h"
 using namespace std;
 
@@ -67,6 +68,7 @@ Optional<Set<string>> placeEmergencySupplies(const Map<string, Set<string>>& roa
 }
 
 
+
 /* * * * * * * Test Helper Functions Below This Point * * * * * */
 #include "GUI/SimpleTest.h"
 
@@ -109,7 +111,10 @@ bool isCovered(const string& city,
 /* TODO: Add your own custom tests here! */
 
 
-
+STUDENT_TEST("Handles a single city with 0 supply (should fail)") {
+    Map<string, Set<string>> roads = { {"A", {}} };
+    EXPECT(!placeEmergencySupplies(makeSymmetric(roads), 0).hasValue());
+}
 
 
 

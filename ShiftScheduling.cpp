@@ -1,4 +1,5 @@
 #include "ShiftScheduling.h"
+
 #include "error.h"
 #include "vector.h"
 #include "set.h"
@@ -91,7 +92,6 @@ Set<Shift> maxProfitSchedule(const Set<Shift>& shifts, int maxHours) {
 
 
 
-
 /* * * * * * Test Cases * * * * * */
 #include "GUI/SimpleTest.h"
 
@@ -101,7 +101,10 @@ Set<Shift> maxProfitSchedule(const Set<Shift>& shifts, int maxHours) {
 
 
 
-
+STUDENT_TEST("numSchedulesFor returns 1 with empty shift list and any non-negative hours") {
+    EXPECT_EQUAL(numSchedulesFor({}, 0), 1);
+    EXPECT_EQUAL(numSchedulesFor({}, 5), 1);
+}
 
 
 
