@@ -1,13 +1,72 @@
 #include "DisasterPlanning.h"
+
+#include "error.h"
 using namespace std;
+
+static Optional<Set<string>> canCover(const Map<string, Set<string>>& roadNetwork,
+                                      int numCities,
+                                      Set<string>& covered,
+                                      Set<string>& chosen) {
+    // Base
+    if (covered.size() == roadNetwork.size()) {
+        return chosen;
+    }
+
+    // fail if we're out of cities to place supplies
+    if (numCities == 0) {
+        return Nothing;
+    }
+
+    // pick an uncovered city
+    for (string city : roadNetwork) {
+        if (!covered.contains(city)) {
+            // try placing supplies in this city and each of its neighbors
+            Set<string> options = roadNetwork[city];
+            options.add(city); // include the city itself
+
+            for (string option : options) {
+                // place supplies in 'option'
+                Set<string> newlyCovered;
+                newlyCovered.add(option);
+                newlyCovered += roadNetwork[option];
+
+                Set<string> added;
+                for (const string& c : newlyCovered) {
+                    if (!covered.contains(c)) {
+                        covered.add(c);
+                        added.add(c);
+                    }
+                }
+
+                chosen.add(option);
+                auto result = canCover(roadNetwork, numCities - 1, covered, chosen);
+                if (result.hasValue()) return result;
+
+                // Backtrack
+                chosen.remove(option);
+                for (const string& c : added) {
+                    covered.remove(c);
+                }
+            }
+
+
+            return Nothing;
+        }
+    }
+
+    // Shouldn't reach here
+    return Nothing;
+}
 
 Optional<Set<string>> placeEmergencySupplies(const Map<string, Set<string>>& roadNetwork,
                                              int numCities) {
-    /* TODO: Delete this comment and next few lines, then implement this function. */
-    (void) roadNetwork;
-    (void) numCities;
-    return Nothing;
+    if (numCities < 0) error("Number of cities cannot be negative.");
+
+    Set<string> covered;
+    Set<string> chosen;
+    return canCover(roadNetwork, numCities, covered, chosen);
 }
+
 
 
 /* * * * * * * Test Helper Functions Below This Point * * * * * */
@@ -52,7 +111,10 @@ bool isCovered(const string& city,
 /* TODO: Add your own custom tests here! */
 
 
-
+STUDENT_TEST("Handles a single city with 0 supply (should fail)") {
+    Map<string, Set<string>> roads = { {"A", {}} };
+    EXPECT(!placeEmergencySupplies(makeSymmetric(roads), 0).hasValue());
+}
 
 
 

@@ -1,20 +1,48 @@
 #include "WinSumLoseSum.h"
+
+#include <set>
+#include <vector>
+#include <iostream>
 using namespace std;
 
 Optional<Set<int>> makeTarget(const Set<int>& elems, int target) {
-    /* TODO: Delete this comment and the next few lines, then implement this
-     * function.
-     */
-    (void) elems;
-    (void) target;
+    if (target == 0) return {}; // return empty set
+    if (elems.isEmpty()) return Nothing;
+
+    int first = elems.first();
+    Set<int> rest = elems;
+    rest.remove(first);
+
+    // Include first
+    Optional<Set<int>> with = makeTarget(rest, target - first);
+    if (with != Nothing) {
+        with.value() += first;
+        return with;
+    }
+
+    // Excludefirst
+    Optional<Set<int>> without = makeTarget(rest, target);
+    if (without != Nothing) {
+        return without;
+    }
+
     return Nothing;
 }
+
+
+
+
+
 
 /* * * * * Test Cases Below This Point * * * * */
 #include "GUI/SimpleTest.h"
 
 /* TODO: Add at least one custom test here, then delete this comment. */
 
+STUDENT_TEST("Works with negative numbers") {
+    /* Can make 0, but not others. */
+    EXPECT_EQUAL(makeTarget({-2, 3, 4, 6},  2), {-2, 4});
+}
 
 
 
